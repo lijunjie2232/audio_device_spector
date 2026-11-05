@@ -1,6 +1,6 @@
 ﻿# Audio Output Monitor
 
-Real-time loopback waveforms for every active Windows audio output device â€” a single-file, dependency-free Win32 application.
+Real-time loopback waveforms for every active Windows audio output device — a single-file, dependency-free Win32 application.
 
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2B-blue)
 ![Language](https://img.shields.io/badge/language-C%2B%2B17-00599C)
@@ -8,14 +8,14 @@ Real-time loopback waveforms for every active Windows audio output device â€�
 
 ## What it does
 
-The app enumerates every **active render endpoint** (speakers, headphones, HDMI, virtual cables, â€¦) and captures each one with **WASAPI loopback** â€” the exact audio stream the device is playing. Every device gets its own card showing:
+The app enumerates every **active render endpoint** (speakers, headphones, HDMI, virtual cables, …) and captures each one with **WASAPI loopback** — the exact audio stream the device is playing. Every device gets its own card showing:
 
 - A live min/max waveform of the last 0.75 s of audio
 - A peak level readout in dB with a decay bar
 - Sample rate and channel layout of the device mix format
 - Capture state: `LIVE`, `IDLE`, `WAITING`, or `ERROR` (with auto-retry)
 
-Devices are hot-plug aware: plug in headphones and a card appears; unplug them and it disappears. No audio is recorded to disk â€” everything stays in memory.
+Devices are hot-plug aware: plug in headphones and a card appears; unplug them and it disappears. No audio is recorded to disk — everything stays in memory.
 
 ## Screenshot
 
@@ -69,23 +69,23 @@ GitHub Actions builds on `windows-latest` with MSVC on every push/PR to `master`
 ## Usage
 
 1. Launch `audio_output_monitor.exe`.
-2. Play audio on any output device â€” its card lights up with a live waveform.
+2. Play audio on any output device — its card lights up with a live waveform.
 3. `F5` or the **Refresh** button rescans devices; scroll to browse when many devices are connected.
 
 ## How it works
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   mix format    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   mono float    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚ WASAPI       â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¶ â”‚ Downmixer     â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¶ â”‚ 32k-sample   â”‚
-â”‚ loopback     â”‚  48k/24-bit     â”‚ (decode +     â”‚  16 kHz         â”‚ lock-free    â”‚
-â”‚ (per device) â”‚  stereo         â”‚  decimate)    â”‚                 â”‚ ring buffer  â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                 â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                 â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
-                                                                          â”‚ acquire
-                                                                   â”Œâ”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”
-                                                                   â”‚ UI thread    â”‚
-                                                                   â”‚ min/max per  â”‚
-                                                                   â”‚ column, D2D  â”‚
-                                                                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+┌──────────────┐   mix format    ┌───────────────┐   mono float    ┌──────────────┐
+│ WASAPI       │ ──────────────▶ │ Downmixer     │ ──────────────▶ │ 32k-sample   │
+│ loopback     │  48k/24-bit     │ (decode +     │  16 kHz         │ lock-free    │
+│ (per device) │  stereo         │  decimate)    │                 │ ring buffer  │
+└──────────────┘                 └───────────────┘                 └──────┬───────┘
+                                                                          │ acquire
+                                                                   ┌──────▼───────┐
+                                                                   │ UI thread    │
+                                                                   │ min/max per  │
+                                                                   │ column, D2D  │
+                                                                   └──────────────┘
 ```
 
 - **Capture thread** (one per device): initializes a shared-mode `IAudioClient` with `AUDCLNT_STREAMFLAGS_LOOPBACK`, pumps packets on an event handle, decodes samples, downmixes to mono, and box-decimates to 16 kHz into a lock-free ring buffer (`writeIndex` with acquire/release ordering).
@@ -95,14 +95,14 @@ GitHub Actions builds on `windows-latest` with MSVC on every push/PR to `master`
 
 ```
 .
-â”œâ”€â”€ main.cpp                  # entire application (~1100 lines)
-â”œâ”€â”€ build.ps1                 # MSVC build script
-â”œâ”€â”€ .github/workflows/ci.yml  # GitHub Actions build
-â”œâ”€â”€ LICENSE                   # MIT
-â””â”€â”€ README.md
+├── main.cpp                  # entire application (~1100 lines)
+├── build.ps1                 # MSVC build script
+├── .github/workflows/ci.yml  # GitHub Actions build
+├── LICENSE                   # MIT
+└── README.md
 ```
 
 ## License
 
-[MIT](LICENSE) Â© 2026
+[MIT](LICENSE) © 2026
 
